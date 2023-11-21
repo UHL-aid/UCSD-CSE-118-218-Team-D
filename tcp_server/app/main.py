@@ -55,6 +55,6 @@ async def websocket_endpoint(websocket: WebSocket):
             print(data)
             #await websocket.send_text(f"Message text was: {data}")
             fake_data = generate_data()
-            await websocket.send_text(f"Fake data was: {fake_data}")
+            await websocket.send_text(f"{fake_data}")
     except WebSocketDisconnect:
         print("client gone")
