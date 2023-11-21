@@ -11,4 +11,4 @@ Scott: Work with Arturo for the communication between watches and server. Work w
 Julian: Work with Scott to integrate watch software
 
 ### What is in your way or impeding progress?
-Thanksgiving, no access to the fancy mics yet, 
+Thanksgiving, no access to the fancy mics yet, inexperience with Android Studio 
