@@ -1,4 +1,5 @@
 import random
 random.seed()
+directions = ["LEFT", "RIGHT", "BACK"]
 def generate_data():
-    return random.randint(0,100)
+    return directions[random.randint(0,2)]

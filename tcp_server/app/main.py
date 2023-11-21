@@ -50,6 +50,7 @@ async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     try:
         while True:
+            time.sleep(1)
             data = await websocket.receive_text()
             print(data)
             #await websocket.send_text(f"Message text was: {data}")
