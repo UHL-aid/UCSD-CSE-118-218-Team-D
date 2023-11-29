@@ -1,7 +1,37 @@
 from fastapi import FastAPI, WebSocket
 from fastapi.responses import HTMLResponse
 from dumm_data import generate_data
+import RPi.GPIO as GPIO
 import time
+
+sensorL = 17
+sensorR = 23
+fake_data = "NONE"
+
+buzzerL = 22
+buzzerR = 12
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(sensorL, GPIO.IN)
+GPIO.setup(sensorR, GPIO.IN)
+GPIO.setup(buzzerL, GPIO.OUT, initial=GPIO.LOW)
+GPIO.setup(buzzerR, GPIO.OUT, initial=GPIO.LOW)
+
+def detectL(sensorL):
+    print("LEFT")
+    global fake_data
+    fake_data = "LEFT"
+
+def detectR(sensorR):
+    print("RIGHT")
+    global fake_data
+    fake_data = "RIGHT"
+
+GPIO.add_event_detect(sensorL, GPIO.RISING, bouncetime=300)
+GPIO.add_event_callback(sensorL, detectL)
+GPIO.add_event_detect(sensorR, GPIO.RISING, bouncetime=300)
+GPIO.add_event_callback(sensorR, detectR)
+        
 app = FastAPI()
 
 html = """
@@ -19,7 +49,7 @@ html = """
         <ul id='messages'>
         </ul>
         <script>
-            var ws = new WebSocket("wss://4935-137-110-116-189.ngrok-free.app/ws");
+            var ws = new WebSocket("wss://53ac-137-110-116-189.ngrok-free.app/ws");
             ws.onmessage = function(event) {
                 var messages = document.getElementById('messages')
                 var message = document.createElement('li')
@@ -54,7 +84,8 @@ async def websocket_endpoint(websocket: WebSocket):
             data = await websocket.receive_text()
             print(data)
             #await websocket.send_text(f"Message text was: {data}")
-            fake_data = generate_data()
+            #fake_data = generate_data()
+            global fake_data
             await websocket.send_text(f"{fake_data}")
     except WebSocketDisconnect:
         print("client gone")
