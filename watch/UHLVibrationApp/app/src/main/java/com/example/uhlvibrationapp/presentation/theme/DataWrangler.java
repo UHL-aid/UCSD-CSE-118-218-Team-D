@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
-//Get everything from socket!
+//Get everything from socket! (Not websocket!)
 //Notes on code: May need to implement callback interface? Also need to make sure this loops.
 
 public class DataWrangler {
@@ -40,8 +40,5 @@ public class DataWrangler {
         });
     }
 
-    public String getReceived(){
-        return received;
-    }
 
 }
