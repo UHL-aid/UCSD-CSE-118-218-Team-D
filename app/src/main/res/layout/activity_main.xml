@@ -30,4 +30,10 @@ android:divider="@android:color/darker_gray"
     android:dividerHeight="1dp"
     android:listSelector="@android:color/holo_blue_light"
     android:padding="8dp" />
+    <Button
+        android:id="@+id/button_vibration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/vibration_button_text"
+        android:layout_centerInParent="true" />
     </LinearLayout>
