@@ -3,6 +3,7 @@ from fastapi.responses import HTMLResponse
 from dumm_data import generate_data
 import RPi.GPIO as GPIO
 import time
+import asyncio
 
 sensorL = 17
 sensorR = 23
@@ -49,7 +50,7 @@ html = """
         <ul id='messages'>
         </ul>
         <script>
-            var ws = new WebSocket("wss://53ac-137-110-116-189.ngrok-free.app/ws");
+            var ws = new WebSocket("wss://2919-2600-387-15-1113-00-2.ngrok-free.app/ws");
             ws.onmessage = function(event) {
                 var messages = document.getElementById('messages')
                 var message = document.createElement('li')
@@ -79,13 +80,17 @@ async def get():
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     try:
+        
+        
         while True:
-            time.sleep(1)
+            await asyncio.sleep(0.5)
             data = await websocket.receive_text()
             print(data)
             #await websocket.send_text(f"Message text was: {data}")
             #fake_data = generate_data()
             global fake_data
             await websocket.send_text(f"{fake_data}")
+            
+            fake_data = "NONE"
     except WebSocketDisconnect:
         print("client gone")
