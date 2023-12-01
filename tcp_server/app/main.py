@@ -1,37 +1,44 @@
 from fastapi import FastAPI, WebSocket
 from fastapi.responses import HTMLResponse
 from dumm_data import generate_data
-import RPi.GPIO as GPIO
+#import RPi.GPIO as GPIO
 import time
 import asyncio
+import usb.core
+import usb.util
+from tuning import Tuning
 
-sensorL = 17
-sensorR = 23
-fake_data = "NONE"
+dev = usb.core.find(idVendor=0x2886, idProduct=0x0018)
 
-buzzerL = 22
-buzzerR = 12
+if dev:
+    Mic_tuning = Tuning(dev)
+#sensorL = 17
+#sensorR = 23
+#fake_data = "NONE"
 
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(sensorL, GPIO.IN)
-GPIO.setup(sensorR, GPIO.IN)
-GPIO.setup(buzzerL, GPIO.OUT, initial=GPIO.LOW)
-GPIO.setup(buzzerR, GPIO.OUT, initial=GPIO.LOW)
+#buzzerL = 22
+#buzzerR = 12
 
-def detectL(sensorL):
-    print("LEFT")
-    global fake_data
-    fake_data = "LEFT"
+#GPIO.setmode(GPIO.BCM)
+#GPIO.setup(sensorL, GPIO.IN)
+#GPIO.setup(sensorR, GPIO.IN)
+#GPIO.setup(buzzerL, GPIO.OUT, initial=GPIO.LOW)
+#GPIO.setup(buzzerR, GPIO.OUT, initial=GPIO.LOW)
 
-def detectR(sensorR):
-    print("RIGHT")
-    global fake_data
-    fake_data = "RIGHT"
+#def detectL(sensorL):
+#    print("LEFT")
+#    global fake_data
+#    fake_data = "LEFT"
 
-GPIO.add_event_detect(sensorL, GPIO.RISING, bouncetime=300)
-GPIO.add_event_callback(sensorL, detectL)
-GPIO.add_event_detect(sensorR, GPIO.RISING, bouncetime=300)
-GPIO.add_event_callback(sensorR, detectR)
+#def detectR(sensorR):
+#    print("RIGHT")
+#    global fake_data
+#    fake_data = "RIGHT"
+
+#GPIO.add_event_detect(sensorL, GPIO.RISING, bouncetime=300)
+#GPIO.add_event_callback(sensorL, detectL)
+#GPIO.add_event_detect(sensorR, GPIO.RISING, bouncetime=300)
+#GPIO.add_event_callback(sensorR, detectR)
         
 app = FastAPI()
 
@@ -50,7 +57,7 @@ html = """
         <ul id='messages'>
         </ul>
         <script>
-            var ws = new WebSocket("wss://2919-2600-387-15-1113-00-2.ngrok-free.app/ws");
+            var ws = new WebSocket("ws://localhost:8000/ws"); // //bfd9-69-196-47-69.ngrok-free.app/ws");
             ws.onmessage = function(event) {
                 var messages = document.getElementById('messages')
                 var message = document.createElement('li')
@@ -88,9 +95,20 @@ async def websocket_endpoint(websocket: WebSocket):
             print(data)
             #await websocket.send_text(f"Message text was: {data}")
             #fake_data = generate_data()
-            global fake_data
-            await websocket.send_text(f"{fake_data}")
-            
-            fake_data = "NONE"
+            if(Mic_tuning.is_voice()):
+                direction = Mic_tuning.direction
+                if(direction >= 45 and direction < 135):
+                    message = "front"
+                elif(direction >= 135 and direction <225):
+                    message = "left"
+                elif(direction >= 255 and direction < 315):
+                    message = "back"
+                else:
+                    message = "right"
+                
+                await websocket.send_text(f"{message}")
+            else:
+                await websocket.send_text("nothing detected")
+            print(Mic_tuning.read('AGCGAIN'))
     except WebSocketDisconnect:
         print("client gone")
