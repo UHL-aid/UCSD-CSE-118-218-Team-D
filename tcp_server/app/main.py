@@ -110,5 +110,5 @@ async def websocket_endpoint(websocket: WebSocket):
             else:
                 await websocket.send_text("nothing detected")
             print(Mic_tuning.read('AGCGAIN'))
-    except WebSocketDisconnect:
+    except: #WebSocketDisconnect:
         print("client gone")
