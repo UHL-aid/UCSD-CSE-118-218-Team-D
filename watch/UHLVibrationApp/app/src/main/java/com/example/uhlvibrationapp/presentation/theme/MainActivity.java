@@ -52,8 +52,10 @@ public class MainActivity extends Activity {
 
     public void connectWebSocket(){
         OkHttpClient client = new OkHttpClient();
+        String address = "wss://b2a8-69-196-40-116.ngrok-free.app/ws";
+        //"wss://free.blr2.piesocket.com/v3/1?api_key=xgwn1SOmynhDhIEfci5yDZw9Iyg8eEAP4fK5SuMy&notify_self=1"
         Request request = new Request.Builder()
-                .url("wss://free.blr2.piesocket.com/v3/1?api_key=xgwn1SOmynhDhIEfci5yDZw9Iyg8eEAP4fK5SuMy&notify_self=1")
+                .url(address)
                 .build();
         webSocket = client.newWebSocket(request, new WebSocketListener(){ //this is bad form... refactor later.
             @Override
@@ -106,7 +108,8 @@ public class MainActivity extends Activity {
                         receivedData.setText("Received: " + message);
                         webSocket.send("ok " + counter);
                         counter++;
-                        //Should buzz different
+                        //Should buzz different each time it updates!!!
+                        //Though, maybe a buzz should be an interrupt of sorts. 
                     }
                 });
             }
