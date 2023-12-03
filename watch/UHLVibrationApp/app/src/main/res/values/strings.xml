@@ -3,10 +3,5 @@
     <!--
         Moot defined strings. IDK why Android yells at us if we don't do this.
     -->
-    <string name="hello_world">From the Square world,\nHello, %1$s!</string>
-    <string name="received">Received?</string>
-    <string name="yes">Yes</string>
-    <string name="no">No</string>
 
-    <string name= "IP"> paste here </string>
 </resources>
