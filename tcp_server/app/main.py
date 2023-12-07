@@ -57,7 +57,7 @@ html = """
         <ul id='messages'>
         </ul>
         <script>
-            var ws = new WebSocket("ws://localhost:8000/ws"); // //bfd9-69-196-47-69.ngrok-free.app/ws");
+            var ws = new WebSocket("wss://b2a8-69-196-40-116.ngrok-free.app/ws"); // //bfd9-69-196-47-69.ngrok-free.app/ws");
             ws.onmessage = function(event) {
                 var messages = document.getElementById('messages')
                 var message = document.createElement('li')
@@ -110,5 +110,5 @@ async def websocket_endpoint(websocket: WebSocket):
             else:
                 await websocket.send_text("nothing detected")
             print(Mic_tuning.read('AGCGAIN'))
-    except: #WebSocketDisconnect:
+    except:
         print("client gone")
