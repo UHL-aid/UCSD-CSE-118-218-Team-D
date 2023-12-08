@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.example.uhlvibrationapp.R;
@@ -30,6 +31,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         counter = 0;
         receivedData = findViewById(R.id.textView2);
         receivedData.setText("haven't received anything yet");
