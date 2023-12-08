@@ -5,11 +5,18 @@ import usb.core
 import usb.util
 import time
 
+past_sounds = np.zeros(1000)
+
 dev = usb.core.find(idVendor=0x2886, idProduct=0x0018)
 
 def volume(indata, outdata, frames, time, status):
 	volume = np.linalg.norm(indata)*10
-	print(volume)
+	global past_sounds
+	if volume > (np.average(past_sounds) + np.std(past_sounds)):
+		print(volume)
+	past_sounds = np.append(past_sounds, volume)
+	past_sounds = np.delete(past_sounds, 0)
+	
 
 if dev:
 	Mic_tuning = Tuning(dev)

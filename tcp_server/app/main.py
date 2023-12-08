@@ -100,11 +100,11 @@ async def websocket_endpoint(websocket: WebSocket):
                 if(direction >= 45 and direction < 135):
                     message = "front"
                 elif(direction >= 135 and direction <225):
-                    message = "left"
+                    message = "LEFT"
                 elif(direction >= 255 and direction < 315):
-                    message = "back"
+                    message = "BOTH"
                 else:
-                    message = "right"
+                    message = "RIGHT"
                 
                 await websocket.send_text(f"{message}")
             else:
