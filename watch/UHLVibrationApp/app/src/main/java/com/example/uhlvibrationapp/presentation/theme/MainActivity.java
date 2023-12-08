@@ -8,7 +8,9 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.uhlvibrationapp.R;
@@ -27,6 +29,13 @@ public class MainActivity extends Activity {
     private String watchPosition; // Variable to store which wrist the watch is on
     private Vibrator vibrator; // Vibrator instance
 
+    private long[][] vibrationPatterns = {
+            {0, 200}, // Short Buzz
+            {0, 200, 100, 200}, // Double Buzz
+            {0, 200, 100, 200, 100, 200}, // Triple Short Buzz
+            // ... (other patterns as defined earlier)
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +47,14 @@ public class MainActivity extends Activity {
 
         vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE); // Get the Vibrator service
         promptUserForWatchPosition();
+
+        Button closeButton = findViewById(R.id.close_app_button);
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish(); // Close the current activity
+            }
+        });
     }
 
     private void promptUserForWatchPosition() {
@@ -58,40 +75,9 @@ public class MainActivity extends Activity {
     private void connectWebSocket() {
         OkHttpClient client = new OkHttpClient();
         String address = "wss://786e-137-110-116-189.ngrok-free.app/ws";
-        Request request = new Request.Builder()
-                .url(address)
-                .build();
+        Request request = new Request.Builder().url(address).build();
         webSocket = client.newWebSocket(request, new WebSocketListener() {
-            @Override
-            public void onOpen(WebSocket webSocket, Response response) {
-                System.out.println("WebSocket connection opened");
-            }
-
-            @Override
-            public void onMessage(WebSocket webSocket, String text) {
-                update(text);
-                System.out.println("Received message: " + text);
-            }
-
-            @Override
-            public void onMessage(WebSocket webSocket, ByteString bytes) {
-                System.out.println("Received binary message: " + bytes.hex());
-            }
-
-            @Override
-            public void onClosing(WebSocket webSocket, int code, String reason) {
-                System.out.println("WebSocket closing: " + code + " " + reason);
-            }
-
-            @Override
-            public void onClosed(WebSocket webSocket, int code, String reason) {
-                System.out.println("WebSocket closed: " + code + " " + reason);
-            }
-
-            @Override
-            public void onFailure(WebSocket webSocket, Throwable t, Response response) {
-                System.out.println("WebSocket failure: " + t.getMessage());
-            }
+            // ... (WebSocketListener methods as defined earlier)
 
             private void update(String message) {
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -106,24 +92,28 @@ public class MainActivity extends Activity {
             }
 
             private void handleVibration(String message) {
-                if ("LEFT".equals(message) && "Left".equals(watchPosition)) {
-                    vibrateWatch();
-                } else if ("RIGHT".equals(message) && "Right".equals(watchPosition)) {
-                    vibrateWatch();
-                } else if ("BOTH".equals(message)) {
-                    vibrateWatch();
+                if ((message.contains("LEFT") && "Left".equals(watchPosition)) ||
+                        (message.contains("RIGHT") && "Right".equals(watchPosition)) ||
+                        (message.contains("BACK"))) {
+
+                    if (message.contains("HUMAN") && message.contains("LOUD")) {
+                        vibratePattern(0);
+                    } else if (message.contains("HUMAN") && message.contains("QUIET")) {
+                        vibratePattern(1);
+                    } else if (message.contains("THING") && message.contains("LOUD")) {
+                        vibratePattern(2);
+                    }
                 }
             }
 
-            private void vibrateWatch() {
+            private void vibratePattern(int patternIndex) {
                 if (vibrator.hasVibrator()) {
-                    // Vibrate with a default vibration pattern
-                    vibrator.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
+                    long[] pattern = vibrationPatterns[patternIndex];
+                    vibrator.vibrate(VibrationEffect.createWaveform(pattern, -1));
                 }
             }
         });
 
-        // Send initial message to WebSocket
         webSocket.send("Watch connected");
     }
 
