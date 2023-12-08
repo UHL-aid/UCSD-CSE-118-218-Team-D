@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.example.uhlvibrationapp.R;
@@ -30,6 +31,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         counter = 0;
         receivedData = findViewById(R.id.textView2);
         receivedData.setText("haven't received anything yet");
@@ -55,7 +57,7 @@ public class MainActivity extends Activity {
 
     private void connectWebSocket() {
         OkHttpClient client = new OkHttpClient();
-        String address = "wss://2ce1-69-196-47-65.ngrok-free.app/ws";
+        String address = "wss://786e-137-110-116-189.ngrok-free.app/ws";
         Request request = new Request.Builder()
                 .url(address)
                 .build();
