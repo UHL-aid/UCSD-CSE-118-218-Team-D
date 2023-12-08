@@ -98,13 +98,13 @@ async def websocket_endpoint(websocket: WebSocket):
             if(Mic_tuning.is_voice()):
                 direction = Mic_tuning.direction
                 if(direction >= 45 and direction < 135):
-                    message = "front"
+                    message = "BOTH"
                 elif(direction >= 135 and direction <225):
-                    message = "left"
+                    message = "RIGHT"
                 elif(direction >= 255 and direction < 315):
-                    message = "back"
+                    message = "FRONT"
                 else:
-                    message = "right"
+                    message = "LEFT"
                 
                 await websocket.send_text(f"{message}")
             else:
