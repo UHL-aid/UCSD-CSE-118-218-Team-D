@@ -30,10 +30,9 @@ public class MainActivity extends Activity {
     private Vibrator vibrator; // Vibrator instance
 
     private long[][] vibrationPatterns = {
+            {0, 500}, // Long Buzz
             {0, 200}, // Short Buzz
-            {0, 200, 100, 200}, // Double Buzz
-            {0, 200, 100, 200, 100, 200}, // Triple Short Buzz
-            // ... (other patterns as defined earlier)
+            {0, 250, 150, 100, 50, 400} // Random Pattern Buzz
     };
 
     @Override
@@ -74,10 +73,40 @@ public class MainActivity extends Activity {
 
     private void connectWebSocket() {
         OkHttpClient client = new OkHttpClient();
-        String address = "wss://786e-137-110-116-189.ngrok-free.app/ws";
+        String address = "wss://3e16-137-110-116-189.ngrok-free.app/ws";
         Request request = new Request.Builder().url(address).build();
         webSocket = client.newWebSocket(request, new WebSocketListener() {
-            // ... (WebSocketListener methods as defined earlier)
+
+            @Override
+            public void onOpen(WebSocket webSocket, Response response) {
+                System.out.println("WebSocket connection opened");
+            }
+
+            @Override
+            public void onMessage(WebSocket webSocket, String text) {
+                update(text);
+                System.out.println("Received message: " + text);
+            }
+
+            @Override
+            public void onMessage(WebSocket webSocket, ByteString bytes) {
+                System.out.println("Received binary message: " + bytes.hex());
+            }
+
+            @Override
+            public void onClosing(WebSocket webSocket, int code, String reason) {
+                System.out.println("WebSocket closing: " + code + " " + reason);
+            }
+
+            @Override
+            public void onClosed(WebSocket webSocket, int code, String reason) {
+                System.out.println("WebSocket closed: " + code + " " + reason);
+            }
+
+            @Override
+            public void onFailure(WebSocket webSocket, Throwable t, Response response) {
+                System.out.println("WebSocket failure: " + t.getMessage());
+            }
 
             private void update(String message) {
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -97,10 +126,13 @@ public class MainActivity extends Activity {
                         (message.contains("BACK"))) {
 
                     if (message.contains("HUMAN") && message.contains("LOUD")) {
+                        System.out.println("Human Loud");
                         vibratePattern(0);
                     } else if (message.contains("HUMAN") && message.contains("QUIET")) {
+                        System.out.println("Human Quiet");
                         vibratePattern(1);
                     } else if (message.contains("THING") && message.contains("LOUD")) {
+                        System.out.println("Thing Loud");
                         vibratePattern(2);
                     }
                 }
