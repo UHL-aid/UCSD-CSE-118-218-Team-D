@@ -73,7 +73,7 @@ public class MainActivity extends Activity {
 
     private void connectWebSocket() {
         OkHttpClient client = new OkHttpClient();
-        String address = "wss://3e16-137-110-116-189.ngrok-free.app/ws";
+        String address = "wss://ecae-137-110-116-189.ngrok-free.app/ws";
         Request request = new Request.Builder().url(address).build();
         webSocket = client.newWebSocket(request, new WebSocketListener() {
 
