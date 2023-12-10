@@ -32,7 +32,7 @@ public class MainActivity extends Activity {
     private long[][] vibrationPatterns = {
             {0, 500}, // Long Buzz
             {0, 200}, // Short Buzz
-            {0, 250, 150, 100, 50, 400} // Random Pattern Buzz
+            {0, 200 , 100, 200}, // Double Buzz
     };
 
     @Override
@@ -134,6 +134,13 @@ public class MainActivity extends Activity {
                     } else if (message.contains("THING") && message.contains("LOUD")) {
                         System.out.println("Thing Loud");
                         vibratePattern(2);
+                    }
+
+                    // Introduce a delay of 2000 milliseconds (2 seconds) after each vibration
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
                 }
             }
